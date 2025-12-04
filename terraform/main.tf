@@ -1,9 +1,3 @@
-variable "environment" {
-  description = "Environment name (e.g., dev, staging, prod)"
-  type        = string
-  default     = "prd"  # Optional: Set a sensible default
-}
-
 module "vpc" {
   source      = "./modules/vpc"
   environment = var.environment
@@ -14,18 +8,18 @@ module "networking" {
   vpc_id         = module.vpc.vpc_id
   public_subnets  = module.vpc.public_subnets
   private_subnets = module.vpc.private_subnets
-  environment    = var.environment  # Pass for route table/IGW/NAT naming
+  environment    = var.environment
 }
 
 module "security_groups" {
-  source      = "./modules/security-groups"
+  source      = "./modules/vpcgroup"  # <-- Change to this if not renaming folder; otherwise "./modules/security-groups"
   vpc_id      = module.vpc.vpc_id
-  environment = var.environment  # Pass for SG naming/tagging
+  environment = var.environment
 }
 
 module "waf" {
   source      = "./modules/waf"
-  environment = var.environment  # Pass for ACL naming/metrics
+  environment = var.environment
 }
 
 module "alb" {
@@ -34,5 +28,5 @@ module "alb" {
   subnets         = module.vpc.public_subnets
   security_groups = module.security_groups.alb_sg_id
   waf_arn         = module.waf.waf_arn
-  environment     = var.environment  # Pass for ALB naming/tagging
+  environment     = var.environment
 }
