@@ -17,7 +17,7 @@ pipeline {
         stage('Checkout Source Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/parthorookie/aws-waf-gitops.git'
+                    url: 'https://github.com/parthorookie/awswafjenkins.git'
             }
         }
 
